@@ -125,6 +125,7 @@ export interface Order {
   razorpay_signature: string | null;
   currency: string;
   payment_created_at: string | null;
+  shiprocket_order_id?: string | null;
 }
 
 export type OrderStatus =
@@ -218,6 +219,30 @@ export interface Shipment {
   delivered_at: string | null;
   created_at: string;
   updated_at: string;
+  shiprocket_order_id?: string | null;
+  shipment_id?: string | null;
+  awb_code?: string | null;
+  courier_company_id?: number | null;
+  courier_name?: string | null;
+  tracking_url?: string | null;
+  tracking_status?: string | null;
+  tracking_message?: string | null;
+  tracking_last_synced_at?: string | null;
+  pickup_status?: string | null;
+}
+
+export interface TrackingEvent {
+  id: string;
+  order_id: string | null;
+  shiprocket_order_id: string | null;
+  shipment_id: string | null;
+  awb_code: string | null;
+  status: string;
+  status_code: string | null;
+  activity: string | null;
+  location: string | null;
+  event_timestamp: string | null;
+  created_at: string;
 }
 
 export interface Notification {

@@ -12,6 +12,7 @@ import { supabase } from "../Admin/lib/supabase";import type {
   Shipment,
   Notification,
   ShippingEstimate,
+  TrackingEvent,
 } from "./types";
 /* ---------------------- Categories ---------------------- */
 export async function fetchCategories(): Promise<Category[]> {
@@ -562,5 +563,36 @@ export async function updateOrder(
     .single();
   if (error) throw error;
   return data;
+}
+
+/* ---------------------- Tracking Events ---------------------- */
+export async function fetchTrackingEvents(orderId: string): Promise<TrackingEvent[]> {
+  const { data, error } = await supabase
+    .from("order_tracking_events")
+    .select("*")
+    .eq("order_id", orderId)
+    .order("event_timestamp", { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function syncTrackingFromBackend(orderId: string): Promise<{ success: boolean; message: string }> {
+  const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shiprocket-sync-tracking`;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  };
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ order_id: orderId }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error || `Tracking sync failed (${response.status})`);
+  }
+  const data = await response.json();
+  return { success: data.success, message: data.message ?? "Sync complete" };
 }
 

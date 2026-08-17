@@ -1,4 +1,4 @@
-import React, { useState  }  from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Typewriter from 'typewriter-effect';
@@ -24,6 +24,14 @@ import {
   Award,
 } from 'lucide-react';
 
+// const advertisementImages = [
+//   '/assets/IoT.jpg',
+//   '/assets/bio-med.jpg',
+//   '/assets/rfid.jpg',
+//   '/assets/IoT-img.jpg',
+//   '/assets/main_img.webp',
+// ];
+
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -31,6 +39,7 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Header mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       <Hero />
+      {/* <AdvertisementMarquee /> */}
       <About />
       <Products />
       <Features />
@@ -192,6 +201,40 @@ function Hero() {
                 </a>
               </div>
             </motion.div>
+
+            {/* Image Marquee / Slider */}
+            <div className="mt-12 overflow-hidden rounded-xl">
+              <motion.div
+                className="flex"
+                animate={{
+                  x: ["0%", "-100%", "-200%", "-300%", "-400%", "0%"],
+                }}
+                transition={{
+                  duration: 15,
+                  ease: "linear",
+                  repeat: Infinity,
+                }}
+              >
+                {[
+                  "/assets/ad1.jpeg",
+                  "/assets/ad2.jpeg",
+                  "/assets/ad3.png",
+                  "/assets/ad4.jpeg",
+                  "/assets/ad5.png",
+                ].map((image, index) => (
+                  <div
+                    key={index}
+                    className="min-w-full flex-shrink-0"
+                  >
+                    <img
+                      src={image}
+                      alt={`MICCROTEN Banner ${index + 1}`}
+                      className="w-full h-72 object-cover rounded-xl shadow-lg"
+                    />
+                  </div>
+                ))}
+              </motion.div>
+            </div>
           </div>
 
           <div className="md:w-1/2">
@@ -774,7 +817,7 @@ function ContactForm() {
         type: 'success',
         message: 'Thank you for your message. We will get back to you soon!'
       });
-      setFormData({ name: '', email: '',phone: '', subject: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error: any) {
       console.error('Supabase error:', error);
       setStatus({
